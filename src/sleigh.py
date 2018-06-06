@@ -18,19 +18,26 @@ class Sleigh:
     # Main function that execute the fittin process
     # for a particular present
     def fit_present(self, present):
+        max_rotations = 3
+
         for y in range(0, self.size):
             for block in self.row_blocks[y]: 
-                if((block[1] + block[0]) < present.x):
-                    continue
+                for rotation in range(0, max_rotations):
+                    if((block[1] + block[0]) < present.x):
+                        continue
 
-                point = (block[0], y)
+                    point = (block[0], y)
 
-                if(self.fit_from_point(present, point)):
-                    self.add_present(present, point)
-                    self.update_row_blocks(present, point)
-                    present.set_point(point)
-                    return True
+                    if(self.fit_from_point(present, point)):
+                        self.add_present(present, point)
+                        self.update_row_blocks(present, point)
+                        present.set_point(point)
+                        return True
 
+                    present.next_rotation()
+
+                present.set_default_rotation()
+                
         return False
 
     # Function to see if a present fit from 

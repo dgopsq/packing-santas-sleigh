@@ -1,4 +1,5 @@
 import numpy as np
+import itertools as it
 
 class Present:
     def __init__(self, pid, x, y, z):
@@ -10,6 +11,13 @@ class Present:
         # The starting point used
         # to compute the output file
         self.point = False
+
+        # Combinations of rotations
+        self.combinations = []
+        self._generate_combinations()
+
+        # (?) Optimize z
+        self.set_default_rotation()
 
     # Set the starting point in 
     # the matrix
@@ -40,7 +48,25 @@ class Present:
 
         return output
 
-    # _NOT IMPLEMENTED_
-    # Rotate the present
-    def rotate(self):
-        return False
+    def set_default_rotation(self):
+        current = (self.x, self.y, self.z)
+        new = self.combinations[0]
+        
+        self._sort_combinations()
+
+        if(current[2] > new[2]):
+            self.next_rotation()
+            self._sort_combinations()
+
+    def next_rotation(self):
+        old = (self.x, self.y, self.z)
+        self.combinations.append(old)
+        self.x, self.y, self.z = self.combinations.pop(0)
+
+    def _generate_combinations(self):
+        main = (self.x, self.y, self.z)
+        self.combinations = list(it.permutations(main))
+        self._sort_combinations()
+        
+    def _sort_combinations(self):
+        self.combinations = sorted(self.combinations, key = lambda x: x[2])

@@ -1,5 +1,7 @@
 import csv
 from numpy import savetxt
+from tqdm import tqdm
+from itertools import islice
 
 from src.present import Present 
 from src.sleigh import Sleigh 
@@ -21,18 +23,14 @@ with open(PRESENTS_DATASET) as f:
 # Reverse the presents
 presents = presents[::-1]
 
-# Debug 
-presents = presents[0:100]
-
 # Creating a Sleigh of 1000x1000
 sleigh = Sleigh(1000)
 
 # Iterating over the presents list
-fitted = 0
-for present in presents:
-    if(sleigh.fit_present(present)):
-        fitted += 1
-        print("Fitted {0}".format(present.pid))
+with tqdm(total = len(presents)) as pbar:
+    for present in presents:
+        sleigh.fit_present(present)
+        pbar.update(1)
 
 # Writing the output file
 with open(OUTPUT_FILE, "w") as csv_file:
