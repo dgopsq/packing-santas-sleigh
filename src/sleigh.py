@@ -23,7 +23,8 @@ class Sleigh:
         for y in range(0, self.size):
             for block in self.row_blocks[y]: 
                 for rotation in range(0, max_rotations):
-                    if((block[1] + block[0]) < present.x):
+                    if((block[1] - block[0]) < present.x):
+                        present.next_rotation()
                         continue
 
                     point = (block[0], y)
@@ -37,7 +38,7 @@ class Sleigh:
                     present.next_rotation()
 
                 present.set_default_rotation()
-                
+
         return False
 
     # Function to see if a present fit from 
