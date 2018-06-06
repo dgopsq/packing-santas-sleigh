@@ -79,7 +79,9 @@ class Sleigh:
                     self.row_blocks[y][index] = (item_block[1], block[1])
                 elif(item_block[0] > block[0] and item_block[1] == block[1]):
                     self.row_blocks[y][index] = (block[0], item_block[0])
-                else:
+                elif(item_block[0] > block[0] and item_block[1] < block[1]):
                     self.row_blocks[y].pop(index)
                     self.row_blocks[y].insert(index, (item_block[1], block[1]))
                     self.row_blocks[y].insert(index, (block[0], item_block[1]))
+                elif(item_block[0] == block[0] and item_block[1] == block[1]):
+                    self.row_blocks[y].pop(index)

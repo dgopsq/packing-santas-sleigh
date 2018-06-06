@@ -48,6 +48,8 @@ class Present:
 
         return output
 
+    # We want the present in the position
+    # with less z height.
     def set_default_rotation(self):
         current = (self.x, self.y, self.z)
         new = self.combinations[0]
@@ -58,6 +60,8 @@ class Present:
             self.next_rotation()
             self._sort_combinations()
 
+    # Get the next rotation (the best in
+    # terms of z height).
     def next_rotation(self):
         old = (self.x, self.y, self.z)
         self.combinations.append(old)
