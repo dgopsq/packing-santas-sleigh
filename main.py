@@ -4,11 +4,16 @@ from numpy import savetxt
 from src.present import Present 
 from src.sleigh import Sleigh 
 
+# Options
+PRESENTS_DATASET = "./dataset/presents.csv"
+OUTPUT_FILE = "./solution.out"
+SLEIGH_SIZE = 1000
+
 # List of Present objects
 presents = []
 
 # Reading the presents
-with open("./dataset/presents.csv") as f:
+with open(PRESENTS_DATASET) as f:
     reader = csv.reader(f)
     next(reader)
     presents = [Present(*r) for r in reader]
@@ -30,7 +35,7 @@ for present in presents:
         print("Fitted {0}".format(present.pid))
 
 # Writing the output file
-with open("solution.out", "w") as csv_file:
+with open(OUTPUT_FILE, "w") as csv_file:
     writer = csv.writer(csv_file, delimiter=',')
     for present in presents:
         writer.writerow(present.generate_output_list())
