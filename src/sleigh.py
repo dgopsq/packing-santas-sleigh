@@ -28,6 +28,7 @@ class Sleigh:
                 if(self.fit_from_point(present, point)):
                     self.add_present(present, point)
                     self.update_row_blocks(present, point)
+                    present.set_point(point)
                     return True
 
         return False
