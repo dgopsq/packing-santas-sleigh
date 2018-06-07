@@ -26,14 +26,42 @@ presents = presents[::-1]
 # Creating a Sleigh of 1000x1000
 sleigh = Sleigh(1000)
 
-# Iterating over the presents list
-with tqdm(total = len(presents)) as pbar:
-    for present in presents:
-        sleigh.fit_present(present)
-        pbar.update(1)
+# This is the main cycle.
+# It manages the package iteration and
+# when the Sleight class has to change
+# his level.
 
+# Fitted presents list
+fitted = 0
+
+# Should the matrix rotate?
+rotate_matrix = False
+
+num_presents = len(presents)
+
+with tqdm(total = num_presents) as pbar:
+    while fitted < num_presents:
+        for pid, present in enumerate(presents):
+            fitted_point = sleigh.fit_present(present, rotate_matrix = rotate_matrix)
+
+            if(fitted_point != False):
+                # Update progress
+                pbar.update(1)
+                fitted += 1
+
+                # Check if it's time to change level
+                if(sleigh.is_time_to_change()):
+                    sleigh.next_operable_level()
+                    rotate_matrix = False
+
+                # Check if it's time to rotate
+                if(rotate_matrix == False and fitted_point[1] >= (sleigh.size / 2) + 1):
+                    rotate_matrix = True
+                
 # Writing the output file
 with open(OUTPUT_FILE, "w") as csv_file:
     writer = csv.writer(csv_file, delimiter=',')
     for present in presents:
         writer.writerow(present.generate_output_list())
+
+# savetxt('matrix.out', sleigh.matrix, fmt = "%i", delimiter = "\t")

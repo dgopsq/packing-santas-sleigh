@@ -4,7 +4,9 @@ class Sleigh:
     def __init__(self, size):
         # Initialize matrix
         self.size = size
+        self.level = 0
         self.matrix = np.zeros((self.size, self.size), dtype = np.int16)
+        self.max_space = float(self.size**2)
 
         # N.B. We don't need to know how much free space
         # there is in a row, but I want to know the size
@@ -16,24 +18,35 @@ class Sleigh:
             self.row_blocks.append([ (0, self.size) ])
 
     # Main function that execute the fittin process
-    # for a particular present
-    def fit_present(self, present):
+    # for a particular present.
+    # If we are iterating over the reversed matrix
+    # we should remember that only the iteration for y
+    # starts from the last item, the iteration for x
+    # is still from left to right.
+    def fit_present(self, present, rotate_matrix = False):
         max_rotations = 3
+        y_range = range(0, self.size)
 
-        for y in range(0, self.size):
+        if(rotate_matrix):
+            y_range = reversed(y_range)
+
+        for y in y_range:
             for block in self.row_blocks[y]: 
                 for rotation in range(0, max_rotations):
                     if((block[1] - block[0]) < present.x):
                         present.next_rotation()
                         continue
 
-                    point = (block[0], y)
+                    if(rotate_matrix):
+                        point = (block[0], y - present.y, self.level)
+                    else:
+                        point = (block[0], y, self.level)
 
                     if(self.fit_from_point(present, point)):
                         self.add_present(present, point)
                         self.update_row_blocks(present, point)
                         present.set_point(point)
-                        return True
+                        return point
 
                     present.next_rotation()
 
@@ -60,14 +73,21 @@ class Sleigh:
 
     # Add a present to the Sleigh matrix
     # setting all the zeroes to the z size
-    # of the present
+    # of the present.
     def add_present(self, present, point):
         for x in range(point[0], point[0] + present.x):
             for y in range(point[1], point[1] + present.y):
                 self.matrix[y][x] = present.z
 
-    # Update the blocks in each row
+    # Update the blocks in each row by splitting them.
+    # There is a block size limit which is at least
+    # the "min_block_size" variable value.
     def update_row_blocks(self, present, point):
+
+        # This mens that block of size 1 will be
+        # removed and ignored.
+        min_block_size = 3
+
         for y in range(point[1], point[1] + present.y):
             for index, block in enumerate(self.row_blocks[y]):
                 item_block = (point[0], point[0] + present.x)
@@ -76,12 +96,65 @@ class Sleigh:
                     continue
                 
                 if(item_block[0] == block[0] and item_block[1] < block[1]):
-                    self.row_blocks[y][index] = (item_block[1], block[1])
+                    if(block[1] - item_block[1] < min_block_size):
+                        self.row_blocks[y].pop(index)
+                    else:
+                        self.row_blocks[y][index] = (item_block[1], block[1])
                 elif(item_block[0] > block[0] and item_block[1] == block[1]):
-                    self.row_blocks[y][index] = (block[0], item_block[0])
+                    if(item_block[0] - block[0] < min_block_size):
+                        self.row_blocks[y].pop(index)
+                    else:
+                        self.row_blocks[y][index] = (block[0], item_block[0])
                 elif(item_block[0] > block[0] and item_block[1] < block[1]):
                     self.row_blocks[y].pop(index)
-                    self.row_blocks[y].insert(index, (item_block[1], block[1]))
-                    self.row_blocks[y].insert(index, (block[0], item_block[1]))
+
+                    if(block[1] - item_block[1] >= min_block_size):
+                        self.row_blocks[y].insert(index, (item_block[1], block[1]))
+
+                    if(item_block[1] - block[0] >= min_block_size):
+                        self.row_blocks[y].insert(index, (block[0], item_block[1]))
                 elif(item_block[0] == block[0] and item_block[1] == block[1]):
                     self.row_blocks[y].pop(index)
+    
+    # Update the sleigh matrix and
+    # add a level. It actually starts
+    # fitting presents to z + 1.
+    def next_level(self):
+        self.level += 1
+        substract_matrix = np.full((self.size, self.size), 1, dtype = np.int16)
+        self.matrix = self.matrix - substract_matrix
+        self.matrix = self.matrix.clip(min = 0)
+
+    # We want a level that has enough free
+    # space to add out packages.
+    # This is not a great move, but probably allows
+    # to reduce time.
+    def next_operable_level(self):
+        # Go to next level
+        self.next_level()
+
+        if(self.is_level_operable()):
+            return self.level
+        else:
+            # No, so to the next level!
+            self.next_operable_level()
+
+    # This method checks if the current
+    # level has enough free space
+    def is_level_operable(self):
+        free_space_threshold = 0.7
+
+        # Get space percentage
+        free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
+
+        return free_space > free_space_threshold
+
+    # This method checks if it's time
+    # to switch level.
+    def is_time_to_change(self):
+        free_space_threshold = 0.3
+        
+        # Get space percentage
+        free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
+
+        return free_space < free_space_threshold

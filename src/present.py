@@ -29,6 +29,9 @@ class Present:
     def generate_output_list(self):
         if(self.point == False):
             return []
+
+        # Adjusted initial vertices
+        p = (self.point[0] + 1, self.point[1] + 1, self.point[2] + 1)
         
         output = []
 
@@ -36,15 +39,15 @@ class Present:
 
         # When there is only self.point, one unit is added
         # to fix the starting point of the algorithm
-        output += [self.point[0] + 1, self.point[1] + 1, 1] 
-        output += [(self.point[0] + self.x).item(), self.point[1] + 1, 1]
-        output += [(self.point[0] + self.x).item(), (self.point[1] + self.y).item(), 1]
-        output += [self.point[0] + 1, (self.point[1] + self.y).item(), 1]
+        output += [p[0], p[1], p[2]] 
+        output += [(p[0] + self.x).item() - 1, p[1], p[2]]
+        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2]]
+        output += [p[0], (p[1] + self.y).item() - 1, p[2]]
 
-        output += [self.point[0] + 1, self.point[1] + 1, self.z.item()] 
-        output += [(self.point[0] + self.x).item(), self.point[1] + 1, self.z.item()]
-        output += [(self.point[0] + self.x).item(), (self.point[1] + self.y).item(), self.z.item()]
-        output += [self.point[0] + 1, (self.point[1] + self.y).item(), self.z.item()]
+        output += [p[0], p[1], p[2] + self.z.item() - 1] 
+        output += [(p[0] + self.x).item() - 1, p[1], p[2] + self.z.item() - 1]
+        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
+        output += [p[0], (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
 
         return output
 
