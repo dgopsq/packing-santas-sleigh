@@ -15,7 +15,7 @@ class Sleigh:
 
         for row in range(0, self.size):
             # (start_block, end_block)
-            self.row_blocks.append([ (0, self.size) ])
+            self.row_blocks.append([ (0, self.size - 1) ])
 
     # Main function that execute the fittin process
     # for a particular present.
@@ -33,12 +33,12 @@ class Sleigh:
         for y in y_range:
             for block in self.row_blocks[y]: 
                 for rotation in range(0, max_rotations):
-                    if((block[1] - block[0]) < present.x):
+                    if((block[1] - block[0] + 1) < present.x):
                         present.next_rotation()
                         continue
 
                     if(rotate_matrix):
-                        point = (block[0], y - present.y, self.level)
+                        point = (block[0], y - present.y + 1, self.level)
                     else:
                         point = (block[0], y, self.level)
 
@@ -86,33 +86,37 @@ class Sleigh:
 
         # This mens that block of size 1 will be
         # removed and ignored.
-        min_block_size = 3
+        min_block_size = 2
 
         for y in range(point[1], point[1] + present.y):
             for index, block in enumerate(self.row_blocks[y]):
-                item_block = (point[0], point[0] + present.x)
+                item_block = (point[0], point[0] + present.x - 1)
 
                 if(item_block[0] < block[0] or item_block[0] > block[1]):
                     continue
                 
+                # Item to add is near the left edge of the block
                 if(item_block[0] == block[0] and item_block[1] < block[1]):
                     if(block[1] - item_block[1] < min_block_size):
                         self.row_blocks[y].pop(index)
                     else:
-                        self.row_blocks[y][index] = (item_block[1], block[1])
+                        self.row_blocks[y][index] = (item_block[1] + 1, block[1])
+                # Item to add is near the right edge of the block
                 elif(item_block[0] > block[0] and item_block[1] == block[1]):
                     if(item_block[0] - block[0] < min_block_size):
                         self.row_blocks[y].pop(index)
                     else:
-                        self.row_blocks[y][index] = (block[0], item_block[0])
+                        self.row_blocks[y][index] = (block[0], item_block[0] - 1)
+                # Item to add is  NOT near an edge of the block
                 elif(item_block[0] > block[0] and item_block[1] < block[1]):
                     self.row_blocks[y].pop(index)
 
                     if(block[1] - item_block[1] >= min_block_size):
-                        self.row_blocks[y].insert(index, (item_block[1], block[1]))
+                        self.row_blocks[y].insert(index, (item_block[1] + 1, block[1]))
 
-                    if(item_block[1] - block[0] >= min_block_size):
-                        self.row_blocks[y].insert(index, (block[0], item_block[1]))
+                    if(item_block[0] - block[0] >= min_block_size):
+                        self.row_blocks[y].insert(index, (block[0], item_block[0] - 1))
+                # else...
                 elif(item_block[0] == block[0] and item_block[1] == block[1]):
                     self.row_blocks[y].pop(index)
     
@@ -142,7 +146,7 @@ class Sleigh:
     # This method checks if the current
     # level has enough free space
     def is_level_operable(self):
-        free_space_threshold = 0.7
+        free_space_threshold = 0.5
 
         # Get space percentage
         free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
@@ -152,9 +156,38 @@ class Sleigh:
     # This method checks if it's time
     # to switch level.
     def is_time_to_change(self):
-        free_space_threshold = 0.3
+        free_space_threshold = 0.2
         
         # Get space percentage
         free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
 
         return free_space < free_space_threshold
+
+    # Update blocks list. Because we change
+    # levef for a reason!
+    def recompute_blocks(self):
+        self.row_blocks = []
+
+        # This mens that block of size 1 will be
+        # removed and ignored.
+        min_block_size = 2
+
+        for y in range(0, self.size):
+            n_free = 0
+
+            self.row_blocks.append([])
+
+            for x in range(0, self.size):
+                if(self.matrix[y][x] == 0):
+                    n_free += 1
+
+                    if(x == self.size - 1 and n_free > min_block_size):
+                        self.row_blocks[y].append((x - n_free + 1, x))
+                else:
+                    if(n_free < min_block_size):
+                        n_free = 0
+                        continue
+                    
+                    self.row_blocks[y].append((x - n_free, x - 1))
+                    n_free = 0
+                    
