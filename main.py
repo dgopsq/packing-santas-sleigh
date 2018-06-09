@@ -42,6 +42,9 @@ num_presents = len(presents)
 with tqdm(total = num_presents) as pbar:
     while fitted < num_presents:
         for pid, present in enumerate(presents):
+            if(present.point != False):
+                continue
+
             fitted_point = sleigh.fit_present(present, rotate_matrix = rotate_matrix)
 
             if(fitted_point != False):
@@ -67,4 +70,4 @@ with open(OUTPUT_FILE, "w") as csv_file:
     for present in presents:
         writer.writerow(present.generate_output_list())
 
-savetxt('matrix.out', sleigh.matrix, fmt = "%i", delimiter = "\t")
+# savetxt('matrix.out', sleigh.matrix, fmt = "%i", delimiter = "\t")
