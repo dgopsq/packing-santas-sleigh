@@ -181,7 +181,7 @@ class Sleigh:
                 if(self.matrix[y][x] == 0):
                     n_free += 1
 
-                    if(x == self.size - 1 and n_free > min_block_size):
+                    if(x == self.size - 1 and n_free >= min_block_size):
                         self.row_blocks[y].append((x - n_free + 1, x))
                 else:
                     if(n_free < min_block_size):
