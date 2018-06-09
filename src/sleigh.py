@@ -160,8 +160,6 @@ class Sleigh:
     # This method checks if it's time
     # to switch level.
     def is_time_to_change(self):
-        free_space_threshold = 0.2
-        
         # Get space percentage
         free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
 
