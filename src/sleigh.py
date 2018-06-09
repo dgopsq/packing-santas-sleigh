@@ -8,6 +8,13 @@ class Sleigh:
         self.matrix = np.zeros((self.size, self.size), dtype = np.int16)
         self.max_space = float(self.size**2)
 
+        # - PARAMETERS -
+        # Here it's possible to change useful parameters
+        self.max_present_rotations = 5
+        self.min_block_size = 3
+        self.max_space_treshold = 0.3
+        self.min_space_treshold = 0.6
+
         # N.B. We don't need to know how much free space
         # there is in a row, but I want to know the size
         # of each block of spaces.
@@ -24,7 +31,6 @@ class Sleigh:
     # starts from the last item, the iteration for x
     # is still from left to right.
     def fit_present(self, present, rotate_matrix = False):
-        max_rotations = 3
         y_range = range(0, self.size)
 
         if(rotate_matrix):
@@ -32,7 +38,7 @@ class Sleigh:
 
         for y in y_range:
             for block in self.row_blocks[y]: 
-                for rotation in range(0, max_rotations):
+                for rotation in range(0, self.max_present_rotations):
                     if((block[1] - block[0] + 1) < present.x):
                         present.next_rotation()
                         continue
@@ -84,9 +90,9 @@ class Sleigh:
     # the "min_block_size" variable value.
     def update_row_blocks(self, present, point):
 
-        # This mens that block of size 1 will be
+        # This mens that block of size n will be
         # removed and ignored.
-        min_block_size = 2
+        min_block_size = self.min_block_size
 
         for y in range(point[1], point[1] + present.y):
             for index, block in enumerate(self.row_blocks[y]):
@@ -146,12 +152,10 @@ class Sleigh:
     # This method checks if the current
     # level has enough free space
     def is_level_operable(self):
-        free_space_threshold = 0.5
-
         # Get space percentage
         free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
 
-        return free_space > free_space_threshold
+        return free_space > self.min_space_treshold
 
     # This method checks if it's time
     # to switch level.
@@ -161,16 +165,16 @@ class Sleigh:
         # Get space percentage
         free_space = (self.max_space - np.count_nonzero(self.matrix)) / self.max_space
 
-        return free_space < free_space_threshold
+        return free_space < self.max_space_treshold
 
     # Update blocks list. Because we change
     # levef for a reason!
     def recompute_blocks(self):
         self.row_blocks = []
 
-        # This mens that block of size 1 will be
+        # This mens that block of size n will be
         # removed and ignored.
-        min_block_size = 2
+        min_block_size = self.min_block_size
 
         for y in range(0, self.size):
             n_free = 0
