@@ -44,6 +44,11 @@ class Sleigh:
                         continue
 
                     if(rotate_matrix):
+                        # If the real y is out of the sleight
+                        # then refuse the package
+                        if(y - present.y + 1 < 0):
+                            continue
+
                         point = (block[0], y - present.y + 1, self.level)
                     else:
                         point = (block[0], y, self.level)
