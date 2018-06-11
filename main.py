@@ -5,6 +5,7 @@ from itertools import islice
 
 from src.elf import Elf
 from src.present import Present
+from src.sleigh import Sleigh 
 
 # Options
 PRESENTS_DATASET = "./dataset/presents.csv"
@@ -24,7 +25,8 @@ with open(PRESENTS_DATASET) as f:
 presents = presents[::-1][0:3000]
 
 # Create and execute an elf
-elf1 = Elf(presents)
+sleigh1 = Sleigh(1000, 1000)
+elf1 = Elf(presents, sleigh1)
 res_presents = elf1.start_working()
 
 # Writing the output file

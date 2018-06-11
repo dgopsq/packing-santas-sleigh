@@ -2,21 +2,18 @@ from numpy import savetxt
 from tqdm import tqdm
 from itertools import islice
 
-from src.sleigh import Sleigh 
-
 class Elf:
-    def __init__(self, presents, matrix_size = 1000, from_x = 0, from_y = 0):
+    def __init__(self, presents, sleigh, from_x = 0, from_y = 0):
         # Presents sublist
         self.presents = presents
         self.num_presents = len(self.presents)
 
-        # Submatrix size and starting points
-        self.size = matrix_size
+        # Submatrix starting points
         self.from_x = from_x
         self.from_y = from_y
 
         # Creating a Sleigh
-        self.sleigh = Sleigh(self.size)
+        self.sleigh = sleigh
 
     def start_working(self):
         # Fitted presents list
@@ -46,6 +43,14 @@ class Elf:
                         fitted += 1
                         has_changed = True
 
+                        # Add the point to the present
+                        computed_point = (
+                            fitted_point[0] + self.from_x, 
+                            fitted_point[1] + self.from_y,
+                            fitted_point[2]
+                        )
+                        present.set_point(computed_point)
+
                         # Check if it's time to change level
                         if(self.sleigh.is_time_to_change()):
                             self.sleigh.next_operable_level()
@@ -53,7 +58,7 @@ class Elf:
                             rotate_matrix = False
 
                         # Check if it's time to rotate
-                        if(rotate_matrix == False and fitted_point[1] >= (self.sleigh.size / 2) + 1):
+                        if(rotate_matrix == False and fitted_point[1] >= (self.sleigh.size_y / 2)):
                             rotate_matrix = True
 
                 # If no presents fitted during

@@ -1,12 +1,13 @@
 import numpy as np
 
 class Sleigh:
-    def __init__(self, size):
+    def __init__(self, size_x, size_y):
         # Initialize matrix
-        self.size = size
+        self.size_x = size_x
+        self.size_y = size_y
         self.level = 0
-        self.matrix = np.zeros((self.size, self.size), dtype = np.int16)
-        self.max_space = float(self.size**2)
+        self.matrix = np.zeros((self.size_y, self.size_x), dtype = np.int16)
+        self.max_space = float(self.size_x * self.size_y)
 
         # - PARAMETERS -
         # Here it's possible to change useful parameters
@@ -20,9 +21,9 @@ class Sleigh:
         # of each block of spaces.
         self.row_blocks = []
 
-        for row in range(0, self.size):
+        for row in range(0, self.size_y):
             # (start_block, end_block)
-            self.row_blocks.append([ (0, self.size - 1) ])
+            self.row_blocks.append([ (0, self.size_x - 1) ])
 
     # Main function that execute the fittin process
     # for a particular present.
@@ -31,7 +32,7 @@ class Sleigh:
     # starts from the last item, the iteration for x
     # is still from left to right.
     def fit_present(self, present, rotate_matrix = False):
-        y_range = range(0, self.size)
+        y_range = range(0, self.size_y)
 
         if(rotate_matrix):
             y_range = reversed(y_range)
@@ -57,7 +58,6 @@ class Sleigh:
                     if(self.fit_from_point(present, point)):
                         self.add_present(present, point)
                         self.update_row_blocks(present, point)
-                        present.set_point(point)
                         return point
 
                     present.next_rotation()
@@ -74,7 +74,7 @@ class Sleigh:
         to_x = point[0] + present.x
         to_y = point[1] + present.y
 
-        if(to_x > self.size or to_y > self.size):
+        if(to_x > self.size_x or to_y > self.size_y):
             return False
 
         # Getting the relative sub-matrix from the layer matrix
@@ -137,7 +137,7 @@ class Sleigh:
     # fitting presents to z + 1.
     def next_level(self):
         self.level += 1
-        substract_matrix = np.full((self.size, self.size), 1, dtype = np.int16)
+        substract_matrix = np.full((self.size_y, self.size_x), 1, dtype = np.int16)
         self.matrix = self.matrix - substract_matrix
         self.matrix = self.matrix.clip(min = 0)
 
@@ -180,16 +180,16 @@ class Sleigh:
         # removed and ignored.
         min_block_size = self.min_block_size
 
-        for y in range(0, self.size):
+        for y in range(0, self.size_y):
             n_free = 0
 
             self.row_blocks.append([])
 
-            for x in range(0, self.size):
+            for x in range(0, self.size_x):
                 if(self.matrix[y][x] == 0):
                     n_free += 1
 
-                    if(x == self.size - 1 and n_free >= min_block_size):
+                    if(x == self.size_x - 1 and n_free >= min_block_size):
                         self.row_blocks[y].append((x - n_free + 1, x))
                 else:
                     if(n_free < min_block_size):
