@@ -21,7 +21,7 @@ with open(PRESENTS_DATASET) as f:
     presents = [Present(*r) for r in reader]
 
 # Reverse the presents
-presents = presents[::-1][0:3000]
+presents = presents[::-1]
 
 # Creating a Sleigh of 1000x1000
 sleigh = Sleigh(1000)
