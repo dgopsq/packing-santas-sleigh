@@ -3,7 +3,10 @@ from tqdm import tqdm
 from itertools import islice
 
 class Elf:
-    def __init__(self, presents, sleigh, from_x = 0, from_y = 0):
+    def __init__(self, elf_n, presents, sleigh, from_x = 0, from_y = 0):
+        # Elf number
+        self.elf_n = elf_n
+
         # Presents sublist
         self.presents = presents
         self.num_presents = len(self.presents)
@@ -26,7 +29,7 @@ class Elf:
         # It manages the package iteration and
         # when the Sleight class has to change
         # his level.
-        with tqdm(total = self.num_presents) as pbar:
+        with tqdm(total = self.num_presents, position = self.elf_n) as pbar:
             while fitted < self.num_presents:
                 # Check if at least an insertion has happened
                 has_changed = False
