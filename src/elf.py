@@ -63,6 +63,8 @@ class Elf:
                         # Check if it's time to rotate
                         if(rotate_matrix == False and fitted_point[1] >= (self.sleigh.size_y / 2)):
                             rotate_matrix = True
+                        elif(rotate_matrix == True and fitted_point[1] <= (self.sleigh.size_y / 2)):
+                            rotate_matrix = False
 
                 # If no presents fitted during
                 # this last cycle, then it's time
