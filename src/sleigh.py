@@ -47,6 +47,7 @@ class Sleigh:
                         # If the real y is out of the sleight
                         # then refuse the package
                         if(y - present.y + 1 < 0):
+                            present.next_rotation()
                             continue
 
                         point = (block[0], y - present.y + 1, self.level)

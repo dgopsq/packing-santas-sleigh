@@ -21,7 +21,7 @@ with open(PRESENTS_DATASET) as f:
     presents = [Present(*r) for r in reader]
 
 # Reverse the presents
-presents = presents[::-1]
+presents = presents[::-1][0:3000]
 
 # Creating a Sleigh of 1000x1000
 sleigh = Sleigh(1000)
@@ -41,6 +41,9 @@ num_presents = len(presents)
 
 with tqdm(total = num_presents) as pbar:
     while fitted < num_presents:
+        # Check if at least an insertion has happened
+        has_changed = False
+
         for pid, present in enumerate(presents):
             if(present.point != False):
                 continue
@@ -51,6 +54,7 @@ with tqdm(total = num_presents) as pbar:
                 # Update progress
                 pbar.update(1)
                 fitted += 1
+                has_changed = True
 
                 # Check if it's time to change level
                 if(sleigh.is_time_to_change()):
@@ -63,6 +67,14 @@ with tqdm(total = num_presents) as pbar:
                 if(rotate_matrix == False and fitted_point[1] >= (sleigh.size / 2) + 1):
                     rotate_matrix = True
                     # print("Rotate!")
+
+        # If no presents fitted during
+        # this last cycle, then it's time
+        # to change level
+        if(has_changed == False):
+            sleigh.next_operable_level()
+            sleigh.recompute_blocks()
+            rotate_matrix = False
                 
 # Writing the output file
 with open(OUTPUT_FILE, "w") as csv_file:
