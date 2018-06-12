@@ -16,7 +16,7 @@ class Present:
         self.combinations = []
         self._generate_combinations()
 
-        # (?) Optimize z
+        # (?) Optimize y
         self.set_default_rotation()
 
     # Set the starting point in 
@@ -31,7 +31,7 @@ class Present:
             return []
 
         # Adjusted initial vertices
-        p = (self.point[0] + 1, self.point[1] + 1, max_level - self.point[2])
+        p = (self.point[0], self.point[1], max_level - self.point[2] - self.z.item() + 1)
         
         output = []
 
@@ -44,10 +44,10 @@ class Present:
         output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2]]
         output += [p[0], (p[1] + self.y).item() - 1, p[2]]
 
-        output += [p[0], p[1], p[2] - self.z.item() + 1] 
-        output += [(p[0] + self.x).item() - 1, p[1], p[2] - self.z.item() + 1]
-        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2] - self.z.item() + 1]
-        output += [p[0], (p[1] + self.y).item() - 1, p[2] - self.z.item() + 1]
+        output += [p[0], p[1], p[2] + self.z.item() - 1] 
+        output += [(p[0] + self.x).item() - 1, p[1], p[2] + self.z.item() - 1]
+        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
+        output += [p[0], (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
 
         return output
 
@@ -76,4 +76,4 @@ class Present:
         self._sort_combinations()
         
     def _sort_combinations(self):
-        self.combinations = sorted(self.combinations, key = lambda x: x[2])
+        self.combinations = sorted(self.combinations, key = lambda x: x[1])
