@@ -41,11 +41,9 @@ class Sleigh:
 
                 # Update layer height
                 if(self.layer_bottom < self.layer + present.z):
-                    self.layer_bottom = self.layer + present.z + 1
+                    self.layer_bottom = self.layer + present.z
 
-                # Update layer position
-                self.layer += 1
-
+                # Present fitted!
                 return point
 
             # Reset present
