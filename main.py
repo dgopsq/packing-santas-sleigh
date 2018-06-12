@@ -9,9 +9,8 @@ from src.present import Present
 from src.sleigh import Sleigh 
 
 # Options
-PRESENTS_DATASET = "./dataset/presents.csv"
+PRESENTS_DATASET = "./dataset/presents_small.csv"
 OUTPUT_FILE = "./solution.out"
-SLEIGH_SIZE = 1000
 
 # Create and execute an elf
 def call_elf(res, elf_n, presents, sleigh, x, y):
@@ -35,13 +34,12 @@ if __name__ == '__main__':
         presents = [Present(*r) for r in reader]
 
     # Reverse the presents
-    presents = presents[::-1][0:3000]
+    presents = presents[0:3000]
 
-    q = Queue(2)
+    q = Queue()
     elf_team = []
 
-    elf_team.append(Process(target = call_elf, args = (q, 1, presents[0:][::2], Sleigh(1000, 500), 0, 0)))
-    elf_team.append(Process(target = call_elf, args = (q, 2, presents[1:][::2], Sleigh(1000, 500), 0, 500)))
+    elf_team.append(Process(target = call_elf, args = (q, 1, presents, Sleigh(1000, 1000), 0, 0)))
 
     # Clear memory
     del presents
@@ -58,8 +56,12 @@ if __name__ == '__main__':
     # Flatten solution
     res_presents = [item for sublist in res_presents for item in sublist]
 
+    # Get max level reached
+    last_element = sorted(res_presents, key = lambda present: present.point[2] + present.z, reverse = True)[0]
+    max_value = last_element.point[2] + last_element.z
+
     # Writing the output file
     with open(OUTPUT_FILE, "w") as csv_file:
         writer = csv.writer(csv_file, delimiter=',')
         for present in res_presents:
-            writer.writerow(present.generate_output_list())
+            writer.writerow(present.generate_output_list(max_value))

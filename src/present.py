@@ -26,12 +26,12 @@ class Present:
 
     # Generate output list used
     # to validate the result
-    def generate_output_list(self):
+    def generate_output_list(self, max_level):
         if(self.point == False):
             return []
 
         # Adjusted initial vertices
-        p = (self.point[0] + 1, self.point[1] + 1, self.point[2] + 1)
+        p = (self.point[0] + 1, self.point[1] + 1, max_level - self.point[2])
         
         output = []
 
@@ -44,10 +44,10 @@ class Present:
         output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2]]
         output += [p[0], (p[1] + self.y).item() - 1, p[2]]
 
-        output += [p[0], p[1], p[2] + self.z.item() - 1] 
-        output += [(p[0] + self.x).item() - 1, p[1], p[2] + self.z.item() - 1]
-        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
-        output += [p[0], (p[1] + self.y).item() - 1, p[2] + self.z.item() - 1]
+        output += [p[0], p[1], p[2] - self.z.item() + 1] 
+        output += [(p[0] + self.x).item() - 1, p[1], p[2] - self.z.item() + 1]
+        output += [(p[0] + self.x).item() - 1, (p[1] + self.y).item() - 1, p[2] - self.z.item() + 1]
+        output += [p[0], (p[1] + self.y).item() - 1, p[2] - self.z.item() + 1]
 
         return output
 

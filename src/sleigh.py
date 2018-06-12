@@ -11,10 +11,10 @@ class Sleigh:
 
         # - PARAMETERS -
         # Here it's possible to change useful parameters
-        self.max_present_rotations = 5
+        self.max_present_rotations = 3
         self.min_block_size = 3
         self.max_space_treshold = 0.3
-        self.min_space_treshold = 0.6
+        self.min_space_treshold = 0.9
 
         # N.B. We don't need to know how much free space
         # there is in a row, but I want to know the size
@@ -58,6 +58,7 @@ class Sleigh:
                     if(self.fit_from_point(present, point)):
                         self.add_present(present, point)
                         self.update_row_blocks(present, point)
+                        self.next_level()
                         return point
 
                     present.next_rotation()
