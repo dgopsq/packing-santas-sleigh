@@ -39,5 +39,10 @@ max_value = last_present.point[2] + last_present.z
 # Writing the output file
 with open(OUTPUT_FILE, "w") as csv_file:
     writer = csv.writer(csv_file, delimiter=',')
+
+    # Header
+    writer.writerow(['PresentId', 'x1', 'y1', 'z1', 'x2', 'y2', 'z2', 'x3', 'y3', 'z3', 'x4', 'y4', 'z4', 'x5', 'y5', 'z5', 'x6', 'y6', 'z6', 'x7', 'y7', 'z7', 'x8', 'y8', 'z8'])
+
+    # Rows
     for present in presents:
         writer.writerow(present.generate_output_list(max_value))

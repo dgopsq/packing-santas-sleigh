@@ -76,4 +76,4 @@ class Present:
         self._sort_combinations()
         
     def _sort_combinations(self):
-        self.combinations = sorted(self.combinations, key = lambda x: x[2])
+        self.combinations = sorted(self.combinations, key = lambda x: x[1])
