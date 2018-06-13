@@ -3,7 +3,7 @@ from itertools import combinations
 class Sleigh:
     def __init__(self, size_x, size_y):
         # Present parameters
-        self.present_max_rotations = 5
+        self.present_max_rotations = 4
 
         # Matrix parameters
         self.size_x = size_x
@@ -24,29 +24,25 @@ class Sleigh:
         while True:
             point = False
 
-            # Start finding a space to fit the
-            # present.
-            # Heuristic stuff...
+            # Package rotation
+            for rotation in range(0, self.present_max_rotations): 
+                # Start finding a space to fit the
+                # present.
 
-            # Top-left most
-            '''
-            self.free_space = sorted(self.free_space, key = lambda s: (s[1], s[0]))
-            for space in self.free_space:
-                if(space[2] >= present.x and space[3] >= present.y):
-                    point = (space[0], space[1], self.layer)
+                # Best area fit
+                fit_spaces = [s for s in self.free_space if s[2] >= present.x and s[3] >= present.y]
+                fit_spaces = sorted(fit_spaces, key = lambda s: s[2] * s[3])
+
+                if(len(fit_spaces) > 0):
+                    point = (fit_spaces[0][0], fit_spaces[0][1], self.layer)
                     break
-            '''
+                else:
+                    present.next_rotation()
 
-            # Best area fit
-            fit_spaces = [s for s in self.free_space if s[2] >= present.x and s[3] >= present.y]
-            fit_spaces = sorted(fit_spaces, key = lambda s: s[2] * s[3])
-
-            if(len(fit_spaces) > 0):
-                point = (fit_spaces[0][0], fit_spaces[0][1], self.layer)
 
             # No space found
             if(point == False):
-                self.consecutive_not_fitted += 1
+                present.set_default_rotation()
                 self.next_empty_layer()
                 continue
 
