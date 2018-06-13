@@ -23,6 +23,7 @@ class Sleigh:
     # Loop to fit a present
     def fit_present(self, present):
         while True:
+<<<<<<< HEAD
             point = False
 
             # Start finding a space to fit the
@@ -49,6 +50,41 @@ class Sleigh:
             if(point == False):
                 self.consecutive_not_fitted += 1
                 self.next_empty_layer()
+=======
+            for rotation in range(0, self.present_max_rotations):
+                # If there is not enough orizontal space
+                if(self.shelf_x + present.x > self.size_x):
+                    present.next_rotation()
+                    continue
+
+                # If there is not enough vertical space
+                if(self.shelf_y + present.y > self.size_y):
+                    present.next_rotation()
+                    continue
+
+                point = (self.shelf_x, self.shelf_y, self.layer)
+
+                # Update shelf position
+                self.shelf_x += present.x + 1
+
+                # Update shelf height
+                if(self.shelf_bottom < self.shelf_y + present.y):
+                    self.shelf_bottom = self.shelf_y + present.y
+
+                # Update layer height
+                if(self.layer_bottom < self.layer + present.z):
+                    self.layer_bottom = self.layer + present.z
+
+                # Present fitted!
+                return point
+
+            # Reset present
+            present.set_default_rotation()
+
+            # If we completed the layer
+            if(self.shelf_bottom >= self.size_y):
+                self.next_layer()
+>>>>>>> 4798d980bdc750b0196c20788182d73b8749f516
                 continue
 
             # Update layer height.

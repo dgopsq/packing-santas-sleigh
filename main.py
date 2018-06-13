@@ -7,7 +7,7 @@ from src.present import Present
 from src.sleigh import Sleigh
 
 # Options
-PRESENTS_DATASET = "./dataset/presents.csv"
+PRESENTS_DATASET = "./dataset/presents_small.csv"
 OUTPUT_FILE = "./solution.out"
 
 # List of Present objects
