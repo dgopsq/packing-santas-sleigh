@@ -4,7 +4,6 @@ class Sleigh:
     def __init__(self, size_x, size_y):
         # Present parameters
         self.present_max_rotations = 5
-        self.max_consecutive_not_fitted = 10
 
         # Matrix parameters
         self.size_x = size_x
@@ -23,7 +22,6 @@ class Sleigh:
     # Loop to fit a present
     def fit_present(self, present):
         while True:
-<<<<<<< HEAD
             point = False
 
             # Start finding a space to fit the
@@ -50,41 +48,6 @@ class Sleigh:
             if(point == False):
                 self.consecutive_not_fitted += 1
                 self.next_empty_layer()
-=======
-            for rotation in range(0, self.present_max_rotations):
-                # If there is not enough orizontal space
-                if(self.shelf_x + present.x > self.size_x):
-                    present.next_rotation()
-                    continue
-
-                # If there is not enough vertical space
-                if(self.shelf_y + present.y > self.size_y):
-                    present.next_rotation()
-                    continue
-
-                point = (self.shelf_x, self.shelf_y, self.layer)
-
-                # Update shelf position
-                self.shelf_x += present.x + 1
-
-                # Update shelf height
-                if(self.shelf_bottom < self.shelf_y + present.y):
-                    self.shelf_bottom = self.shelf_y + present.y
-
-                # Update layer height
-                if(self.layer_bottom < self.layer + present.z):
-                    self.layer_bottom = self.layer + present.z
-
-                # Present fitted!
-                return point
-
-            # Reset present
-            present.set_default_rotation()
-
-            # If we completed the layer
-            if(self.shelf_bottom >= self.size_y):
-                self.next_layer()
->>>>>>> 4798d980bdc750b0196c20788182d73b8749f516
                 continue
 
             # Update layer height.
@@ -94,15 +57,7 @@ class Sleigh:
             # Update free space
             self.update_space(point, present)
 
-            # Reset not fitted items
-            self.consecutive_not_fitted = 0
-
             return point
-    
-    # Set next layer
-    def next_layer(self):
-        # Change layer
-        self.layer += 1
 
     # Set next empty layer
     def next_empty_layer(self):
@@ -112,15 +67,7 @@ class Sleigh:
 
         # Reset free space    
         self.free_space = [(1, 1, self.size_x, self.size_y)]
-
-        # Reset not fitted items
-        self.consecutive_not_fitted = 0
     
-    # Check whether it's time to switch
-    # to a whole new layer.
-    def is_time_to_change(self):
-        return self.consecutive_not_fitted >= self.max_consecutive_not_fitted
-
     # Check if there are spaces that intersect
     # with the given present-point and split them.
     def update_space(self, point, present):
